@@ -22,6 +22,9 @@ module Brightkitey
   class Checkin < Base
   end
   
+  class Friend < Base
+  end
+  
   class Comment < Base
   end
   
@@ -46,6 +49,10 @@ module Brightkitey
     
     def objects(options = {})
       Objekt.find(:all, :from => "/people/#{login}/search.xml", :params => options)
+    end
+    
+    def friends
+      Friend.find(:all, :from => "/people/#{login}/friends.xml")
     end
   end
   
