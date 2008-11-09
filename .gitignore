@@ -1,0 +1,5 @@
+*.gem
+pkg
+doc
+.DS_Store
+Rakefile
