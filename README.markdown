@@ -2,7 +2,7 @@
 
 by [Zach Holman](http://zachholman.com) ([brightkite](http://brightkite.com/people/holman))
 
-brightkitey is a cute little wrapper around Brightkite's API. It's possibly horribly broken and incomplete; but it's getting there. Pull requests welcome and appreciated.
+brightkitey is a cute little wrapper around Brightkite's API. It's possibly horribly broken and incomplete, but it's getting there. Pull requests welcome and appreciated.
 
 ## installation and usage
   

@@ -22,10 +22,20 @@ module Brightkitey
   class Checkin < Base
   end
   
+  class Comment < Base
+  end
+  
   class Friend < Base
   end
   
-  class Comment < Base
+  class Me < Base
+    def self.person
+      Me.find(:one, :from => '/me.xml')
+    end
+    
+    def self.friends
+      Friend.find(:all, :from => '/me/friends.xml')
+    end
   end
   
   class Note < Base
@@ -54,6 +64,14 @@ module Brightkitey
     def friends
       Friend.find(:all, :from => "/people/#{login}/friends.xml")
     end
+    
+    def pending_friends
+      Friend.find(:all, :from => "/people/#{login}/pending_friends.xml")      
+    end
+    
+    def self.search(query)
+      Person.find(:all, :from => "/people/search.xml", :params => {:query => query})
+    end
   end
   
   class Photo < Base
@@ -67,6 +85,10 @@ module Brightkitey
   class Place < Base
     def checkins
       Checkin.find(:all, :params => options.update(:project_id => id))
+    end
+    
+    def self.search(query)
+      Place.find(:all, :from => :search, :params => {:q => query})
     end
   end
 
