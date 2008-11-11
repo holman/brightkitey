@@ -19,7 +19,7 @@ module Brightkitey
       base.site = "http://brightkite.com/"
       base.element_name = base.to_s.split('::').last.downcase
       super
-    end
+    end    
   end
   
   class Block < Base
@@ -57,12 +57,19 @@ module Brightkitey
     def self.blocks
       Block.find(:all, :from => '/me/blocked_people.xml')
     end
+  
+    def self.checkin(place_id)
+      Brightkitey::Place.connection.post("/places/#{place_id}/checkins",'')
+    rescue ActiveResource::Redirection
+      true
+    end
   end
   
   class Note < Base
   end
   
   class Objekt < Base
+    self.element_name = 'object'
   end
   
   class Person < Base
