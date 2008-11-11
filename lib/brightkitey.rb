@@ -19,10 +19,16 @@ module Brightkitey
     end
   end
   
+  class Block < Base
+  end
+  
   class Checkin < Base
   end
   
   class Comment < Base
+  end
+  
+  class DirectMessage < Base
   end
   
   class Friend < Base
@@ -35,6 +41,18 @@ module Brightkitey
     
     def self.friends
       Friend.find(:all, :from => '/me/friends.xml')
+    end
+    
+    def self.sent_messages
+      DirectMessage.find(:all, :from => '/me/sent_messages.xml')
+    end
+    
+    def self.received_messages
+      DirectMessage.find(:all, :from => '/me/received_messages.xml')
+    end
+    
+    def self.blocks
+      Block.find(:all, :from => '/me/blocked_people.xml')
     end
   end
   
