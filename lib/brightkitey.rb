@@ -5,9 +5,12 @@ module Brightkitey
   VERSION = '0.0.1'
 
   class << self
-    def authenticate(user, password)
-      Brightkitey::Base.user = user
-      Brightkitey::Base.password = password
+    def authenticate(options)
+      Brightkitey::Base.user = options[:user]
+      Brightkitey::Base.password = options[:password]
+      Brightkitey::Me.person
+    rescue ActiveResource::UnauthorizedAccess
+      false
     end
   end
   
