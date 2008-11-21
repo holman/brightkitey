@@ -2,15 +2,26 @@ require 'rubygems'
 require 'activeresource'
 
 module Brightkitey
-  VERSION = '0.0.1'
+  VERSION = '0.1.0'
+  
+  attr_accessor :logged_in
 
   class << self
     def authenticate(options)
       Brightkitey::Base.user = options[:user]
       Brightkitey::Base.password = options[:password]
       Brightkitey::Me.person
+      @logged_in = true
     rescue ActiveResource::UnauthorizedAccess
       false
+    end
+    
+    def logged_in?
+      @logged_in == true
+    end
+    
+    def me
+      Brightkitey::Me.person
     end
   end
   
@@ -34,37 +45,6 @@ module Brightkitey
   class DirectMessage < Base
   end
   
-  class Friend < Base
-  end
-  
-  class Me < Base
-    def self.person
-      Me.find(:one, :from => '/me.xml')
-    end
-    
-    def self.friends
-      Friend.find(:all, :from => '/me/friends.xml')
-    end
-    
-    def self.sent_messages
-      DirectMessage.find(:all, :from => '/me/sent_messages.xml')
-    end
-    
-    def self.received_messages
-      DirectMessage.find(:all, :from => '/me/received_messages.xml')
-    end
-    
-    def self.blocks
-      Block.find(:all, :from => '/me/blocked_people.xml')
-    end
-  
-    def self.checkin(place_id)
-      Brightkitey::Place.connection.post("/places/#{place_id}/checkins",'')
-    rescue ActiveResource::Redirection
-      true
-    end
-  end
-  
   class Note < Base
   end
   
@@ -75,10 +55,6 @@ module Brightkitey
   class Person < Base
     def checkins
       Checkin.find(:all, :from => "/people/#{login}/objects.xml", :params => {:filters => :checkins})
-    end
-    
-    def checkins
-      Note.find(:all, :from => "/people/#{login}/objects.xml", :params => {:filters => :notes})
     end
     
     def photos
@@ -102,6 +78,9 @@ module Brightkitey
     end
   end
   
+  class Friend < Person
+  end
+  
   class Photo < Base
     self.element_name = 'object'
     
@@ -117,6 +96,31 @@ module Brightkitey
     
     def self.search(query)
       Place.find(:all, :from => :search, :params => {:q => query})
+    end
+  end
+
+  class Me < Person
+    def self.person
+      Me.find(:one, :from => '/me.xml')
+    end
+ 
+    def sent_messages
+      DirectMessage.find(:all, :from => '/me/sent_messages.xml')
+    end
+    
+    def received_messages
+      DirectMessage.find(:all, :from => '/me/received_messages.xml')
+    end
+    
+    def blocks
+      Block.find(:all, :from => '/me/blocked_people.xml')
+    end
+  
+    def checkin(place)
+      place = place.id if place.kind_of?(Place)
+      Brightkitey::Place.connection.post("/places/#{place}/checkins",'')
+    rescue ActiveResource::Redirection
+      true
     end
   end
 
